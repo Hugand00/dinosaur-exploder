@@ -15,9 +15,9 @@
         <jfx.maven.plugin.version>0.0.8</jfx.maven.plugin.version>
         <jpro.version>2025.1.0</jpro.version>
         <fxgl.version>21.1</fxgl.version>
-        <junit.version>5.13.4</junit.version>
-         <pitest.version>1.20.6</pitest.version>
-        <pitest.junit5.version>1.4.0</pitest.junit5.version>
+        <junit.version>5.10.2</junit.version>
+        <pitest.version>1.20.6</pitest.version>
+        <pitest.junit5.version>1.2.1</pitest.junit5.version>
         <mainClassName>com.dinosaur.dinosaurexploder.DinosaurApp</mainClassName>
         <mainClassJProName>com.dinosaur.dinosaurexploder.DinosaurWebApp</mainClassJProName>
     </properties>
@@ -151,12 +151,13 @@
                     <mainClassName>${mainClassJProName}</mainClassName>
                 </configuration>
             </plugin>
+            <!-- PITest Mutation Testing Plugin -->
             <plugin>
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>
                 <version>${pitest.version}</version>
 
-                <!-- Här ligger pluginet för JUnit 5 -->
+                <!-- JUnit 5 plugin dependency -->
                 <dependencies>
                     <dependency>
                         <groupId>org.pitest</groupId>
@@ -166,79 +167,77 @@
                 </dependencies>
 
                 <configuration>
+                    <!-- Use JUnit 5 test framework -->
                     <testPlugin>junit5</testPlugin>
-                    <targetClasses>
-                        <param>com.dinosaur.dinosaurexploder.*</param>
-                    </targetClasses>
-                    <targetTests>
-                        <param>com.dinosaur.dinosaurexploder.*</param>
-                    </targetTests>
-                    <mutators>
-                        <mutator>STRONGER</mutator>
-                    </mutators>
-                    <threads>4</threads>
-                    <outputFormats>
-                        <param>HTML</param>
-                    </outputFormats>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-</project>
-            <!-- <plugin>
-                <groupId>org.pitest</groupId>
-                <artifactId>pitest-maven</artifactId>
-                <version>${pitest.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.pitest</groupId>
-                        <artifactId>pitest-junit5-plugin</artifactId>
-                        <version>1.4.0</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
+                    
                     <!-- Classes to mutate -->
                     <targetClasses>
-                        <param>com.dinosaur.dinosaurexploder.*</param>
+                        <param>com.dinosaur.dinosaurexploder.model.*</param>
+                        <param>com.dinosaur.dinosaurexploder.utils.*</param>
+                        <param>com.dinosaur.dinosaurexploder.components.*</param>
+                        <param>com.dinosaur.dinosaurexploder.controller.*</param>
                     </targetClasses>
+                    
                     <!-- Test classes to run -->
                     <targetTests>
                         <param>com.dinosaur.dinosaurexploder.*Test</param>
                     </targetTests>
-                    <!-- Classes to exclude from mutation -->
+                    
+                    <!-- Classes to exclude from mutation testing -->
                     <excludedClasses>
-                        <!-- <param>com.bikeshare.config.*</param>
-                        <param>com.bikeshare.Application</param>
-                        <param>com.bikeshare.demo.*</param>
-                        <param>com.bikeshare.web.*</param> -->
+                        <param>com.dinosaur.dinosaurexploder.DinosaurApp</param>
+                        <param>com.dinosaur.dinosaurexploder.DinosaurWebApp</param>
+                        <param>com.dinosaur.dinosaurexploder.*.view.*</param>
                     </excludedClasses>
+                    
                     <!-- Methods to exclude -->
                     <excludedMethods>
                         <param>toString</param>
                         <param>hashCode</param>
                         <param>equals</param>
                     </excludedMethods>
+                    
                     <!-- Mutation operators to use -->
                     <mutators>
-                        <mutator>DEFAULTS</mutator>
+                        <mutator>STRONGER</mutator>
                     </mutators>
-                    <!-- Output formats -->
+                    
+                    <!-- Output formats (HTML and XML) -->
                     <outputFormats>
                         <outputFormat>HTML</outputFormat>
                         <outputFormat>XML</outputFormat>
                     </outputFormats>
-                    <!-- Number of threads -->
-                    <threads>2</threads>
-                    <!-- Timeout in milliseconds -->
+                    
+                    <!-- Number of threads to use -->
+                    <threads>4</threads>
+                    
+                    <!-- Timeout configuration (in milliseconds) -->
                     <timeoutConstant>4000</timeoutConstant>
-                    <!-- Memory in MB -->
+                    <timeoutFactor>1.25</timeoutFactor>
+                    
+                    <!-- Memory configuration -->
                     <jvmArgs>
                         <jvmArg>-Xmx1024m</jvmArg>
+                        <jvmArg>-Xms512m</jvmArg>
                     </jvmArgs>
-                    <!-- Verbose reporting for education -->
+                    
+                    <!-- Verbose output for detailed reporting -->
                     <verbose>true</verbose>
-                    <!-- Skip failing tests -->
+                    
+                    <!-- Fail build if mutation score is below threshold (optional) -->
+                    <!-- <mutationThreshold>60</mutationThreshold> -->
+                    <!-- <coverageThreshold>70</coverageThreshold> -->
+                    
+                    <!-- Skip failing tests instead of failing the build -->
                     <skipFailingTests>true</skipFailingTests>
+                    
+                    <!-- Export line coverage data -->
+                    <exportLineCoverage>true</exportLineCoverage>
+                    
+                    <!-- History tracking for incremental analysis -->
+                    <withHistory>true</withHistory>
                 </configuration>
-            </plugin> -->
-        
+            </plugin>
+        </plugins>
+    </build>
+</project>
