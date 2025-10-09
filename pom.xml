@@ -16,6 +16,8 @@
         <jpro.version>2025.1.0</jpro.version>
         <fxgl.version>21.1</fxgl.version>
         <junit.version>5.13.4</junit.version>
+         <pitest.version>1.20.6</pitest.version>
+        <pitest.junit5.version>1.4.0</pitest.junit5.version>
         <mainClassName>com.dinosaur.dinosaurexploder.DinosaurApp</mainClassName>
         <mainClassJProName>com.dinosaur.dinosaurexploder.DinosaurWebApp</mainClassJProName>
     </properties>
@@ -96,6 +98,26 @@
                     <mainClass>${mainClassName}</mainClass>
                 </configuration>
             </plugin>
+            <!-- Jacoco plugin for code coverage -->
+            <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.12</version> <!-- senaste stabila versionen -->
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>report</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
             <!-- Maven Shade Plugin for creating a fat JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -129,6 +151,94 @@
                     <mainClassName>${mainClassJProName}</mainClassName>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest.version}</version>
+
+                <!-- Här ligger pluginet för JUnit 5 -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>1.2.1</version>
+                    </dependency>
+                </dependencies>
+
+                <configuration>
+                    <testPlugin>junit5</testPlugin>
+                    <targetClasses>
+                        <param>com.dinosaur.dinosaurexploder.*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>com.dinosaur.dinosaurexploder.*</param>
+                    </targetTests>
+                    <mutators>
+                        <mutator>STRONGER</mutator>
+                    </mutators>
+                    <threads>4</threads>
+                    <outputFormats>
+                        <param>HTML</param>
+                    </outputFormats>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
+            <!-- <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>1.4.0</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <!-- Classes to mutate -->
+                    <targetClasses>
+                        <param>com.dinosaur.dinosaurexploder.*</param>
+                    </targetClasses>
+                    <!-- Test classes to run -->
+                    <targetTests>
+                        <param>com.dinosaur.dinosaurexploder.*Test</param>
+                    </targetTests>
+                    <!-- Classes to exclude from mutation -->
+                    <excludedClasses>
+                        <!-- <param>com.bikeshare.config.*</param>
+                        <param>com.bikeshare.Application</param>
+                        <param>com.bikeshare.demo.*</param>
+                        <param>com.bikeshare.web.*</param> -->
+                    </excludedClasses>
+                    <!-- Methods to exclude -->
+                    <excludedMethods>
+                        <param>toString</param>
+                        <param>hashCode</param>
+                        <param>equals</param>
+                    </excludedMethods>
+                    <!-- Mutation operators to use -->
+                    <mutators>
+                        <mutator>DEFAULTS</mutator>
+                    </mutators>
+                    <!-- Output formats -->
+                    <outputFormats>
+                        <outputFormat>HTML</outputFormat>
+                        <outputFormat>XML</outputFormat>
+                    </outputFormats>
+                    <!-- Number of threads -->
+                    <threads>2</threads>
+                    <!-- Timeout in milliseconds -->
+                    <timeoutConstant>4000</timeoutConstant>
+                    <!-- Memory in MB -->
+                    <jvmArgs>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                    </jvmArgs>
+                    <!-- Verbose reporting for education -->
+                    <verbose>true</verbose>
+                    <!-- Skip failing tests -->
+                    <skipFailingTests>true</skipFailingTests>
+                </configuration>
+            </plugin> -->
+        
