@@ -48,4 +48,5 @@ public class LevelManager {
     public int getEnemiesToDefeat() {
         return enemiesToDefeat;
     }
+   
 }
