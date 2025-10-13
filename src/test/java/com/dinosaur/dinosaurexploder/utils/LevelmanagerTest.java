@@ -98,9 +98,47 @@ public class LevelmanagerTest {
     }
       @Test
     @DisplayName("should return false that level should advance")
+    void ShouldAdvanceToNextLevel_ThenIncreaseEnemiesToDefeat(){
+        int start = levelManager.getEnemiesToDefeat();
+       
+        levelManager.nextLevel();
+        int after = levelManager.getEnemiesToDefeat();
+
+        assertEquals(start+5, after);
+    }
+    @Test
+    @DisplayName("should return false that level should advance")
+    void ShouldAdvanceToNextLevel_ThenAlterSpawnRate(){
+        double start = levelManager.getEnemySpawnRate();
+        double correctEnemyspawnRate = 0;
+        levelManager.nextLevel();
+        if(levelManager.getCurrentLevel() == 2){
+            correctEnemyspawnRate += Math.max(0.3, start * 0.9);
+        }
+        double after = levelManager.getEnemySpawnRate();
+
+        assertEquals(correctEnemyspawnRate, after);
+    }
+    @Test
+    @DisplayName("should return false that level should advance")
+    void ShouldAdvanceToNextLevel_ThenIncreaseSpeed(){
+        double start = levelManager.getEnemySpeed();
+        double correctEnemyspeed = 0;
+        
+        levelManager.nextLevel();
+        if(levelManager.getCurrentLevel() == 2){
+            correctEnemyspeed += (start += 0.2);
+        }
+       
+        double after = levelManager.getEnemySpeed();
+
+        assertEquals(correctEnemyspeed, after);
+    }
+      @Test
+    @DisplayName("should return false that level should advance")
     void ShouldReturnEnemiesToDefeat(){
         int correctEnemiesToDefeat = 5;
-        
+
         int enemiesToDefeat = levelManager.getEnemiesToDefeat();
 
         assertEquals(correctEnemiesToDefeat, enemiesToDefeat);
