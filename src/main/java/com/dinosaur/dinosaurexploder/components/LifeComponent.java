@@ -1,5 +1,6 @@
 package com.dinosaur.dinosaurexploder.components;
 
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.dinosaur.dinosaurexploder.constants.GameConstants;
 import com.dinosaur.dinosaurexploder.interfaces.Life;
@@ -123,4 +124,38 @@ public class LifeComponent extends Component implements Life {
     public int getLife() {
         return life;
     }
+
+    //Getters for tests och UI-controll
+    public Text getLifeText() {
+        return lifeText;
+    }
+
+    public ImageView getHeart1() {
+        return heart1;
+    }
+
+    public ImageView getHeart2() {
+        return heart2;
+    }
+
+    public ImageView getHeart3() {
+        return heart3;
+    }
+        
+    public void setEntityForTest(Entity entity) {
+        this.entity = entity;
+    }
+
+    public void setLifeForTest(int life) {
+        this.life = life;
+    }
+
+    public Image getHeart(){
+        return heart;
+    }
+    public Image getLostHeart(){
+        return heartLost;
+    }
+
+
 }
