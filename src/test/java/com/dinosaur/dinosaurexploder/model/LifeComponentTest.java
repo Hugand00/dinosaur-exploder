@@ -15,6 +15,8 @@ import com.dinosaur.dinosaurexploder.components.LifeComponent;
 import com.dinosaur.dinosaurexploder.utils.LanguageManager;
 
 import javafx.application.Platform;
+import javafx.beans.property.StringProperty;
+import javafx.scene.image.Image;
 
 class LifeComponentTest {
 
@@ -68,31 +70,56 @@ class LifeComponentTest {
         Platform.runLater(() -> {
 
             lifeComponent.onAdded();
-            lifeComponent.setLifeForTest(2);
-
-             when(languageManagerMock.getTranslation("lives")).thenReturn("Liv");
-
-             lifeComponent.onUpdate(0);
-
-            assertEquals("Liv: 2", lifeComponent.getLifeText().getText(),
+            for (int lives = 0; lives <= 3; lives++) {
+                lifeComponent.setLifeForTest(lives);
+                
+                when(languageManagerMock.getTranslation("lives")).thenReturn("Liv");
+                
+                lifeComponent.onUpdate(0);
+                
+                assertEquals("Liv:" + lives, lifeComponent.getLifeText().getText(),
                 "Text should show correct language and correct amount of lives");
+            }
         });
     }
-
- @Test
+    @Test
     void testUpdateLifeDisplay_ShouldSetCorrectHeartImages() {
         Platform.runLater(() -> {
-
             when(languageManagerMock.getTranslation("lives")).thenReturn("Liv");
+
+            for (int lives = 0; lives <= 3; lives++) {
+                lifeComponent.setLifeForTest(lives);
+                lifeComponent.onAdded(); 
+
+                assertEquals("Liv: " + lives, lifeComponent.getLifeText().getText());
+
+                Image fullHeart = lifeComponent.getHeart();
+                Image lostHeart = lifeComponent.getLostHeart();
+
+                
+                assertSame(lives >= 1 ? fullHeart : lostHeart, lifeComponent.getHeart1().getImage(),
+                        "Heart1 mismatch for life=" + lives);
+            
+                assertSame(lives >= 2 ? fullHeart : lostHeart, lifeComponent.getHeart2().getImage(),
+                        "Heart2 mismatch for life=" + lives);
+         
+                assertSame(lives >= 3 ? fullHeart : lostHeart, lifeComponent.getHeart3().getImage(),
+                        "Heart3 mismatch for life=" + lives);
+            }
+        });
+    }
+  @Test
+    void testLanguageChange_ShouldUpdateText() {
+        Platform.runLater(() -> {
+            lifeComponent.onAdded();
             lifeComponent.setLifeForTest(2);
 
-            lifeComponent.onAdded();
+            when(languageManagerMock.getTranslation("lives")).thenReturn("Liv");
+
+            StringProperty langProp = languageManagerMock.selectedLanguageProperty();
+            langProp.set("sv"); 
 
             assertEquals("Liv: 2", lifeComponent.getLifeText().getText());
-
-            assertSame(lifeComponent.getHeart1().getImage(), lifeComponent.getHeart(), "First heart should be whole");
-            assertSame(lifeComponent.getHeart2().getImage(), lifeComponent.getHeart(), "Second heart should be whole");
-            assertSame(lifeComponent.getHeart3().getImage(), lifeComponent.getLostHeart(), "Third heart should be broken");
         });
     }
 }
