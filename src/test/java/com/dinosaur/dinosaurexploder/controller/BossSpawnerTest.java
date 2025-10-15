@@ -35,30 +35,30 @@ class BossSpawnerTest {
         settings = new Settings();
         levelManager = new LevelManager();
 
-        // Skapa BossSpawner som "spy" så vi kan mocka spawn-metoder
+        
         spawner = spy(new BossSpawner(settings, levelManager));
 
-        // Mocka entiteter
+        
         redDinoMock = mock(Entity.class);
         orangeDinoMock = mock(Entity.class);
         healthBarMock = mock(Entity.class);
 
-        // Mocka komponenter
+       
         redCompMock = mock(RedDinoComponent.class);
         orangeCompMock = mock(OrangeDinoComponent.class);
         healthCompMock = mock(HealthbarComponent.class);
 
-        // Mocka komponent-hämtning
+        
         when(redDinoMock.getComponent(RedDinoComponent.class)).thenReturn(redCompMock);
         when(orangeDinoMock.getComponent(OrangeDinoComponent.class)).thenReturn(orangeCompMock);
         when(healthBarMock.getComponent(HealthbarComponent.class)).thenReturn(healthCompMock);
 
-        // Mocka spawn-metoden så vi slipper FXGL
+       
         doReturn(redDinoMock).when(spawner).spawn(eq("redDino"), anyDouble(), anyDouble());
         doReturn(orangeDinoMock).when(spawner).spawn(eq("orangeDino"), anyDouble(), anyDouble());
         doReturn(healthBarMock).when(spawner).spawn(eq("healthBar"), anyDouble(), anyDouble());
 
-        // Mocka positionsmetoder
+        
         doReturn(new Point2D(400, 300)).when(spawner).getAppCenter();
         doReturn(800.0).when(spawner).getAppWidth();
     }
@@ -67,11 +67,11 @@ class BossSpawnerTest {
     void testSpawnRedBoss() {
         spawner.spawnNewBoss("red");
 
-        // Verifiera att rätt entiteter spawnades
-        verify(spawner).spawn("redDino", 355, 50); // 400 - 45
-        verify(spawner).spawn("healthBar", 585, 15); // 800 - 215
+        
+        verify(spawner).spawn("redDino", 355, 50); 
+        verify(spawner).spawn("healthBar", 585, 15); 
 
-        // Verifiera att komponenterna kopplades
+        
         verify(redCompMock).setLevelManager(levelManager);
         verify(healthCompMock).setDinoComponent(redCompMock);
     }
@@ -129,12 +129,4 @@ class BossSpawnerTest {
         verify(healthBarMock).removeFromWorld();
        
     }
-    // @Test
-    // void testRemoveNoBossEntities(){
-           
-    //     spawner.removeBossEntities();
-
-   
-    //     verifyNoInteractions(redDinoMock, orangeDinoMock, healthBarMock);
-    // }
 }
