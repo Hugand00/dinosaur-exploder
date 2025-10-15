@@ -86,8 +86,15 @@ class BossSpawnerTest {
         verify(orangeCompMock).setLevelManager(levelManager);
         verify(healthCompMock).setDinoComponent(orangeCompMock);
     }
+      @Test
+    void testSpawnNonExistingBoss() {
+        spawner.spawnNewBoss("green");
+
+        verify(spawner, never()).spawn(anyString(), anyDouble(), anyDouble());
+
+    }
     @Test
-    void testHealthbar(){
+    void testHealthbarRed(){
         spawner.spawnNewBoss("red");
 
         spawner.updateHealthBar();
@@ -95,15 +102,32 @@ class BossSpawnerTest {
         verify(healthCompMock).updateBar();
     }
     @Test
-    void testRemoveBossEntities(){
-        spawner.spawnNewBoss("red");
+    void testHealthbarOrange(){
         spawner.spawnNewBoss("orange");
 
+        spawner.updateHealthBar();
+
+        verify(healthCompMock).updateBar();
+    }
+    @Test
+    void testRemoveBossEntitiesRed(){
+        spawner.spawnNewBoss("red");
+        
         spawner.removeBossEntities();
 
         verify(redDinoMock).removeFromWorld();
         verify(healthBarMock).removeFromWorld();
+       
+    }
+     @Test
+    void testRemoveBossEntitiesOrange(){
+        spawner.spawnNewBoss("orange"); 
+        
+        spawner.removeBossEntities();
+
         verify(orangeDinoMock).removeFromWorld();
+        verify(healthBarMock).removeFromWorld();
+       
     }
     // @Test
     // void testRemoveNoBossEntities(){
