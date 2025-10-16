@@ -21,6 +21,7 @@ import com.dinosaur.dinosaurexploder.utils.LanguageManager;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
+import javafx.scene.text.Text;
 
 class LifeComponentTest {
 
@@ -152,21 +153,21 @@ class LifeComponentTest {
 
                 lifeComponent.setLifeForTest(3);
                 lifeComponent.updateLifeDisplayForTest();
-
+                assertEquals("Liv: 3", lifeComponent.getLifeText().getText());
                 assertSame(fullHeart, lifeComponent.getHeart1().getImage());
                 assertSame(fullHeart, lifeComponent.getHeart2().getImage());
                 assertSame(fullHeart, lifeComponent.getHeart3().getImage());
 
                 lifeComponent.setLifeForTest(1);
                 lifeComponent.updateLifeDisplayForTest();
-
+                assertEquals("Liv: 1", lifeComponent.getLifeText().getText());
                 assertSame(fullHeart, lifeComponent.getHeart1().getImage());
                 assertSame(lostHeart, lifeComponent.getHeart2().getImage());
                 assertSame(lostHeart, lifeComponent.getHeart3().getImage());
 
                 lifeComponent.setLifeForTest(0);
                 lifeComponent.updateLifeDisplayForTest();
-
+                assertEquals("Liv: 0", lifeComponent.getLifeText().getText());
                 assertSame(lostHeart, lifeComponent.getHeart1().getImage());
                 assertSame(lostHeart, lifeComponent.getHeart2().getImage());
                 assertSame(lostHeart, lifeComponent.getHeart3().getImage());
@@ -226,12 +227,20 @@ class LifeComponentTest {
         Platform.runLater(() -> {
             try {
                 lifeComponent.onAdded();
-                assertNotNull(lifeComponent.getLifeText());
-                assertNotNull(lifeComponent.getHeart1());
-                assertNotNull(lifeComponent.getHeart2());
-                assertNotNull(lifeComponent.getHeart3());
-                assertNotNull(lifeComponent.getHeart());
-                assertNotNull(lifeComponent.getLostHeart());
+
+                Text lifeText = lifeComponent.getLifeText();
+                assertNotNull(lifeText, "lifeText should not be null");
+                assertEquals("Liv", lifeText.getText(), "lifeText should have correct initial text");
+
+                Image fullHeart = lifeComponent.getHeart();
+                Image lostHeart = lifeComponent.getLostHeart();
+
+                assertSame(fullHeart, lifeComponent.getHeart1().getImage(), "Heart1 image mismatch");
+                assertSame(fullHeart, lifeComponent.getHeart2().getImage(), "Heart2 image mismatch");
+                assertSame(fullHeart, lifeComponent.getHeart3().getImage(), "Heart3 image mismatch");
+
+                assertNotNull(fullHeart, "Heart image should not be null");
+                assertNotNull(lostHeart, "LostHeart image should not be null");
             } finally {
                 latch.countDown();
             }
