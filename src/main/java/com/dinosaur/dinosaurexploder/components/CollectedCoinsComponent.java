@@ -1,5 +1,6 @@
 package com.dinosaur.dinosaurexploder.components;
 
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.dinosaur.dinosaurexploder.constants.GameConstants;
 import com.dinosaur.dinosaurexploder.interfaces.CollectedCoins;
@@ -82,5 +83,15 @@ public class CollectedCoinsComponent extends Component implements CollectedCoins
 
     public int getCoin() {
         return coin;
+    }
+    //Added for test
+    public void setEntityForTest(Entity e) {
+    this.entity = e;
+    }
+    public Text getCoinTextForTest() {
+    return coinText;
+    }
+    public Node getCoinUIForTest() {
+        return coinUI;
     }
 }
