@@ -156,6 +156,9 @@ public class LifeComponent extends Component implements Life {
     public Image getLostHeart(){
         return heartLost;
     }
+    public void updateLifeDisplayForTest() {
+        updateLifeDisplay();
+    }
 
 
 }

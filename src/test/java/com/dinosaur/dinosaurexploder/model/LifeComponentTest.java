@@ -3,6 +3,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.CountDownLatch;
@@ -104,7 +106,7 @@ class LifeComponentTest {
          latch.await();
     }
     @Test
-    void testUpdateLifeDisplay_ShouldSetCorrectHeartImages() throws Exception{
+    void testUpdateLifeDisplay_OnInitialization_ShouldSetCorrectHeartImages() throws Exception{
         CountDownLatch latch = new CountDownLatch(1);
         Platform.runLater(() -> {
             try{
@@ -138,6 +140,45 @@ class LifeComponentTest {
         latch.await();
     }
   @Test
+    void testUpdateLifeDisplay_ShouldReflectLifeChangesDynamically() throws Exception{
+          CountDownLatch latch = new CountDownLatch(1);
+          Platform.runLater(() ->{
+            try{
+                when(languageManagerMock.getTranslation("lives")).thenReturn("Liv");
+                lifeComponent.onAdded();
+
+                Image fullHeart = lifeComponent.getHeart();
+                Image lostHeart = lifeComponent.getLostHeart();
+
+                lifeComponent.setLifeForTest(3);
+                lifeComponent.updateLifeDisplayForTest();
+
+                assertSame(fullHeart, lifeComponent.getHeart1().getImage());
+                assertSame(fullHeart, lifeComponent.getHeart2().getImage());
+                assertSame(fullHeart, lifeComponent.getHeart3().getImage());
+
+                lifeComponent.setLifeForTest(1);
+                lifeComponent.updateLifeDisplayForTest();
+
+                assertSame(fullHeart, lifeComponent.getHeart1().getImage());
+                assertSame(lostHeart, lifeComponent.getHeart2().getImage());
+                assertSame(lostHeart, lifeComponent.getHeart3().getImage());
+
+                lifeComponent.setLifeForTest(0);
+                lifeComponent.updateLifeDisplayForTest();
+
+                assertSame(lostHeart, lifeComponent.getHeart1().getImage());
+                assertSame(lostHeart, lifeComponent.getHeart2().getImage());
+                assertSame(lostHeart, lifeComponent.getHeart3().getImage());
+
+            }
+            finally{
+                latch.countDown();
+            }
+          });
+          latch.await();
+    }
+  @Test
     void testLanguageChange_ShouldUpdateText() throws Exception{
         CountDownLatch latch = new CountDownLatch(1);
         Platform.runLater(() -> {
@@ -158,4 +199,45 @@ class LifeComponentTest {
         });
         latch.await();
     }
+
+  @Test
+    void testClearEntity_ShouldRemoveAllChildrenFromView() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                var entityMock = mock(Entity.class);
+                var viewMock = mock(ViewComponent.class);
+
+                when(entityMock.getViewComponent()).thenReturn(viewMock);
+                lifeComponent.setEntityForTest(entityMock);
+
+                lifeComponent.clearEntity();
+
+                verify(viewMock, times(1)).clearChildren();
+            } finally {
+                latch.countDown();
+            }
+        });
+        latch.await();
+    }
+  @Test
+    void testGetters_ShouldNeverReturnNullAfterOnAdded() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                lifeComponent.onAdded();
+                assertNotNull(lifeComponent.getLifeText());
+                assertNotNull(lifeComponent.getHeart1());
+                assertNotNull(lifeComponent.getHeart2());
+                assertNotNull(lifeComponent.getHeart3());
+                assertNotNull(lifeComponent.getHeart());
+                assertNotNull(lifeComponent.getLostHeart());
+            } finally {
+                latch.countDown();
+            }
+        });
+        latch.await();
+    }
+
+
 }
