@@ -32,10 +32,15 @@ public class OrangeDinoComponentTest {
     @Mock
     LevelManager levelManager;
 
+     @Mock
+     AudioManager audioManager;
+
     @BeforeEach
     void setup(){
         orangeDinoComponent = new OrangeDinoComponent(gameTimer, playerComponent);
         levelManager = mock(LevelManager.class);
+
+        
     }
     @SuppressWarnings("unchecked")
 private <T> T getPrivateField(Object target, String fieldName, Class<T> fieldType) {
