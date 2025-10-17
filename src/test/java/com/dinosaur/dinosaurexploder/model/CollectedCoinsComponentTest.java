@@ -126,8 +126,15 @@ public class CollectedCoinsComponentTest {
             coinsComponent.onAdded(); 
 
             assertEquals(0, coinsComponent.getCoin(), "Initial coin count should be 0");
+
             coinsComponent.incrementCoin();
             assertEquals(1, coinsComponent.getCoin(), "Coin count should reflect increment");
+
+            coinsComponent.incrementCoin();
+            assertEquals(2,coinsComponent.getCoin(), "Coin count should reflect increment");
+
+            Text coinText = coinsComponent.getCoinTextForTest();
+            assertTrue(coinText.getText().contains("2"));
         } finally {
             latch.countDown();
         }
@@ -144,6 +151,9 @@ public class CollectedCoinsComponentTest {
             coinsComponent.incrementCoin(); 
 
             coinsComponent.onUpdate(0); 
+            coinsComponent.onUpdate(1.0);
+            coinsComponent.onUpdate(-0.5);
+
             Text coinText = coinsComponent.getCoinTextForTest();
             assertTrue(coinText.getText().contains("2"), "updateText should reflect latest coin count");
         } finally {
