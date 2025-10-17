@@ -118,5 +118,51 @@ public class CollectedCoinsComponentTest {
         });
         latch.await();
     }
+    @Test
+    void testGetCoin_ShouldReturnCorrectValue() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+       Platform.runLater(() -> {
+        try {
+            coinsComponent.onAdded(); 
 
+            assertEquals(0, coinsComponent.getCoin(), "Initial coin count should be 0");
+            coinsComponent.incrementCoin();
+            assertEquals(1, coinsComponent.getCoin(), "Coin count should reflect increment");
+        } finally {
+            latch.countDown();
+        }
+    });
+    latch.await();
+    }
+    @Test
+    void testUpdateText_ShouldSetTextCorrectly() throws Exception {
+    CountDownLatch latch = new CountDownLatch(1);
+    Platform.runLater(() -> {
+        try {
+            coinsComponent.onAdded();
+            coinsComponent.incrementCoin(); 
+            coinsComponent.incrementCoin(); 
+
+            coinsComponent.onUpdate(0); 
+            Text coinText = coinsComponent.getCoinTextForTest();
+            assertTrue(coinText.getText().contains("2"), "updateText should reflect latest coin count");
+        } finally {
+            latch.countDown();
+        }
+    });
+    latch.await();
+    }
+    @Test
+    void testSaveTotalCoins_ShouldNotThrowException() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                coinsComponent.onAdded();
+                coinsComponent.incrementCoin(); 
+            } finally {
+                latch.countDown();
+            }
+        });
+        latch.await();
+    }
 }

@@ -183,9 +183,6 @@
                         <param>com.dinosaur.dinosaurexploder.*Test</param>
                     </targetTests>
 
-                    <forkCount>0</forkCount>      
-                    <reuseForks>true</reuseForks>
-                    
                     <!-- Classes to exclude from mutation testing -->
                     <excludedClasses>
                         <param>com.dinosaur.dinosaurexploder.DinosaurApp</param>
