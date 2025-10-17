@@ -38,7 +38,7 @@ class LifeComponentTest {
     }
 
      @BeforeEach
-    void setUp() {
+    void setUp() throws Exception{
         languageManagerMock = mock(LanguageManager.class);
         when(languageManagerMock.getTranslation("lives")).thenReturn("Lives");
         when(languageManagerMock.selectedLanguageProperty())
@@ -60,12 +60,32 @@ class LifeComponentTest {
 
         lifeComponent.setEntityForTest(entityMock);
     }
+    private static void runAndWait(Runnable action) {
+    if (Platform.isFxApplicationThread()) {
+        action.run();
+    } else {
+        final CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                action.run();
+            } finally {
+                latch.countDown();
+            }
+        });
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
+    }
+}
+
 
  @Test
     void testOnAdded_ShouldInitializesUIElementsCorrectly() throws Exception {
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.runLater(() -> {
-            try{
+       
+        runAndWait(() -> {
 
                 lifeComponent.onAdded();
     
@@ -74,19 +94,12 @@ class LifeComponentTest {
                 assertNotNull(lifeComponent.getHeart1(), "heart1 should be initialized");
                 assertNotNull(lifeComponent.getHeart2(), "heart2 should be initialized");
                 assertNotNull(lifeComponent.getHeart3(), "heart3 should be initialized");
-            }
-            finally{
-
-                latch.countDown();
-            }
         });
-      latch.await();
+     
     }
  @Test
     void testUpdateTest_ShouldUpdateTextWithCurrentLives() throws Exception{
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.runLater(() -> {
-            try{
+        runAndWait(() -> {
 
                 lifeComponent.onAdded();
                 for (int lives = 0; lives <= 3; lives++) {
@@ -96,21 +109,14 @@ class LifeComponentTest {
                     
                     lifeComponent.onUpdate(0);
                     
-                    assertEquals("Liv:" + lives, lifeComponent.getLifeText().getText(),
+                   assertEquals("Liv: " + lives, lifeComponent.getLifeText().getText(),
                     "Text should show correct language and correct amount of lives");
-            }
-            }
-            finally{
-                latch.countDown();
-            }
+                }
         });
-         latch.await();
     }
     @Test
     void testUpdateLifeDisplay_OnInitialization_ShouldSetCorrectHeartImages() throws Exception{
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.runLater(() -> {
-            try{
+        runAndWait(() -> {
                 when(languageManagerMock.getTranslation("lives")).thenReturn("Liv");
     
                 for (int lives = 0; lives <= 3; lives++) {
@@ -132,19 +138,11 @@ class LifeComponentTest {
                     assertSame(lives >= 3 ? fullHeart : lostHeart, lifeComponent.getHeart3().getImage(),
                             "Heart3 mismatch for life=" + lives);
                 }
-
-            }
-            finally{
-                latch.countDown();
-            }
         });
-        latch.await();
     }
   @Test
     void testUpdateLifeDisplay_ShouldReflectLifeChangesDynamically() throws Exception{
-          CountDownLatch latch = new CountDownLatch(1);
-          Platform.runLater(() ->{
-            try{
+          runAndWait(() ->{
                 when(languageManagerMock.getTranslation("lives")).thenReturn("Liv");
                 lifeComponent.onAdded();
 
@@ -172,18 +170,11 @@ class LifeComponentTest {
                 assertSame(lostHeart, lifeComponent.getHeart2().getImage());
                 assertSame(lostHeart, lifeComponent.getHeart3().getImage());
 
-            }
-            finally{
-                latch.countDown();
-            }
           });
-          latch.await();
     }
   @Test
     void testLanguageChange_ShouldUpdateText() throws Exception{
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.runLater(() -> {
-            try{
+        runAndWait(() -> {
                 lifeComponent.onAdded();
                 lifeComponent.setLifeForTest(2);
     
@@ -193,19 +184,13 @@ class LifeComponentTest {
                 langProp.set("sv"); 
     
                 assertEquals("Liv: 2", lifeComponent.getLifeText().getText());
-            }
-            finally{
-                latch.countDown();
-            }
+            
         });
-        latch.await();
     }
 
   @Test
     void testClearEntity_ShouldRemoveAllChildrenFromView() throws Exception {
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.runLater(() -> {
-            try {
+        runAndWait(() -> {
                 var entityMock = mock(Entity.class);
                 var viewMock = mock(ViewComponent.class);
 
@@ -215,17 +200,14 @@ class LifeComponentTest {
                 lifeComponent.clearEntity();
 
                 verify(viewMock, times(1)).clearChildren();
-            } finally {
-                latch.countDown();
-            }
+            
         });
-        latch.await();
+
     }
   @Test
     void testGetters_ShouldNeverReturnNullAfterOnAdded() throws Exception {
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.runLater(() -> {
-            try {
+         runAndWait(() -> {
+        
                 lifeComponent.onAdded();
 
                 Text lifeText = lifeComponent.getLifeText();
@@ -241,11 +223,8 @@ class LifeComponentTest {
 
                 assertNotNull(fullHeart, "Heart image should not be null");
                 assertNotNull(lostHeart, "LostHeart image should not be null");
-            } finally {
-                latch.countDown();
-            }
+          
         });
-        latch.await();
     }
 
 
