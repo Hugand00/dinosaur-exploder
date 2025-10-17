@@ -20,10 +20,12 @@ public class DinosaurController {
         gameInitializer = new GameInitializer();
         collisionRegistry = new CollisionRegistry();
     }
-
+    protected GameActions createGameActions(GameInitializer init) {
+    return new GameActions(init);
+    }
     public void initGame() {
         gameInitializer.initGame();
-        gameActions = new GameActions(gameInitializer);
+        gameActions = createGameActions(gameInitializer);
     }
 
     public void initInput() {

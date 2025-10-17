@@ -224,5 +224,10 @@ public class OrangeDinoComponent extends Component implements Dinosaur {
         entity.translateX(-movementSpeed);
 
     }
+
+    //Added for testing
+    public boolean getPaused(){
+        return isPaused;
+    }
 }
 
